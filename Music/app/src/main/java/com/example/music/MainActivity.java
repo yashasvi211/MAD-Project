@@ -15,7 +15,8 @@ public class MainActivity extends AppCompatActivity {
     private Button back;
     private SeekBar seekBar;
     private MediaPlayer mediaPlayer;
-    private int[] songs = {R.raw.monkey, R.raw.calm, R.raw.go}; // Example array of song resource IDs
+    private int[] songs = {R.raw.monkey, R.raw.calm, R.raw.go};
+    private int currentPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         next = findViewById(R.id.next);
         back = findViewById(R.id.back);
         seekBar = findViewById(R.id.seekBar);
-        mediaPlayer = MediaPlayer.create(this, songs[0]); // Start with the first song in the array
+        mediaPlayer = MediaPlayer.create(this, songs[currentPosition]); // Start with the first song in the array
 
         seekBar.setMax(mediaPlayer.getDuration());
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -53,11 +54,10 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mediaPlayer.stop();
                 mediaPlayer.reset();
-                mediaPlayer.release(); // Release the MediaPlayer resources
+                mediaPlayer.release(); // ??
 
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                int previousPosition = (currentPosition - 1 + songs.length) % songs.length;
-                int previousSongResourceId = songs[previousPosition];
+                currentPosition = (currentPosition - 1 + songs.length) % songs.length;
+                int previousSongResourceId = songs[currentPosition];
                 mediaPlayer = MediaPlayer.create(MainActivity.this, previousSongResourceId);
 
                 mediaPlayer.start();
@@ -74,9 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.reset();
                 mediaPlayer.release(); // Release the MediaPlayer resources
 
-                int currentPosition = mediaPlayer.getCurrentPosition();
-                int nextPosition = (currentPosition + 1) % songs.length;
-                int nextSongResourceId = songs[nextPosition];
+                currentPosition = (currentPosition + 1) % songs.length;
+                int nextSongResourceId = songs[currentPosition];
                 mediaPlayer = MediaPlayer.create(MainActivity.this, nextSongResourceId);
 
                 mediaPlayer.start();
@@ -85,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                 seekBar.setMax(mediaPlayer.getDuration());
             }
         });
-
 
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,12 +99,5 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
+
 }
