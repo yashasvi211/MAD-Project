@@ -53,9 +53,10 @@ public class MainActivity extends AppCompatActivity {
                     mediaPlayer.pause();
                     play.setText("Play");
                 } else {
+                    mediaPlayer.start();
+                    play.setText("Pause");
                 }
-                mediaPlayer.start();
-                play.setText("Pause");
+
             }
         });
     }
